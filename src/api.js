@@ -1,10 +1,12 @@
-require('dotenv').config();
+// require('dotenv').config();
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 const { response } = require('express');
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const dbPool = require('../config/sequelize');
 const app = express();
-const port = 3005;
+const port = 3006;
 const bodyParser = require('body-parser');
 const db = require('../models')
 app.use(bodyParser.json());
