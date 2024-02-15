@@ -25,6 +25,11 @@
     "test": "jest"
   },
   "dependencies": {
-    "mysql2": "^2.3.0" }
+    "mysql2": "^2.3.0" },
+    "jest": {
+      "setupFiles": ["web-app/jest.setup.js"]
+    }
+    
+
   
 }
