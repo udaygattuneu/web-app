@@ -226,13 +226,13 @@ app.put('/v1/user/self', basicAuthMiddleware, async (req, res) => {
     }
      
   app.listen(port,() => {
-  
+
     console.log(`Server Started at Port ${port}`) 
    
   })
 
   })();
-
+  module.exports = app;
 
 
  
