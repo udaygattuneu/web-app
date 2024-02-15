@@ -1,6 +1,7 @@
 // require('dotenv').config();
 const path = require('path')
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+const validator = require('validator');
 const { response } = require('express');
 const express = require('express');
 const bcrypt = require('bcryptjs');
@@ -31,6 +32,10 @@ app.use((request, response, next) => {
         const {email,password,firstName,lastName} = req.body;
         if (!email || !password || !firstName || !lastName) {
           return res.status(400).send("Bad Request: Missing required fields.");
+      }
+      else if( !validator.isEmail(email)){
+        return res.status(400).send("Bad Request: Missing required fields.");
+
       }
         const hashedpassword = await bcrypt.hash(password,10);
         const user = await db.models.user.create({
