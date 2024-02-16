@@ -120,8 +120,8 @@ jobs:
         NODE_ENV: test
         DB_HOST: 127.0.0.1
         DB_USER: root
-        DB_PASSWORD: password
-        DB_NAME: testdb
+        DB_PASSWORD: MYSQL_ROOT_PASSWORD
+        DB_NAME: MYSQL_DATABASE
         DB_DIALECT: mysql
       run: npm test
 
