@@ -16,7 +16,20 @@ describe('User API Integration Tests with Basic Authentication', () => {
   };
 
   const encodedCredentials = Buffer.from(`${userData.email}:${userData.password}`).toString('base64');
+  // it('should connect to the database successfully', async () => {
+  //   // This test assumes there's an endpoint `/v1/db-status` that checks database connectivity
+  //   // You should replace this with an actual endpoint that can verify DB connection in your application
+  //   const response = await request.get('/healthz');
 
+  //   // The expected response and status code might vary based on your implementation
+  //   // Here, we assume a 200 status code and a specific property in the body for demonstration
+  //   expect(response.status).toBe(200);
+  //   expect(response.body).toHaveProperty('message', 'Connected to the database successfully');
+
+  //   // Alternatively, if directly querying the database in this test, ensure the query executes without errors
+  //   // This might require setting up a direct database connection in the test, which should be closed afterward
+  // });
+  
  
 
   it('should create a user successfully', async () => {

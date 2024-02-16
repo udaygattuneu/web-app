@@ -7,7 +7,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const dbPool = require('../config/sequelize');
 const app = express();
-const port = 3006;
+const port = 3004;
 const bodyParser = require('body-parser');
 const db = require('../models')
 app.use(bodyParser.json());
@@ -25,6 +25,17 @@ app.use((request, response, next) => {
       next();
     }
   });
+
+  app.get('/healthz', async (req, res) => {
+    try {
+      await db.sequelize.authenticate(); // Try to authenticate with the database
+      res.status(200).send(); // If successful, send a 200 status code
+    } catch (error) {
+      console.error('Database connection failed:', error);
+      res.status(503).send(); // If there's an error, send a 503 status code
+    }
+  });
+  
 
   
   app.post('/v1/user',async(req,res)=>{
@@ -194,6 +205,7 @@ app.put('/v1/user/self', basicAuthMiddleware, async (req, res) => {
       }
     } catch (error) {
       //database not available 
+      console.error(error)
       response.status(503).send();
     } finally {
       if (client) {
@@ -232,7 +244,7 @@ app.put('/v1/user/self', basicAuthMiddleware, async (req, res) => {
       console.error('Unable to connect to the database:', error);
     }
      
-
+   
 
   })();
   const server =app.listen(port,() => {
@@ -241,6 +253,7 @@ app.put('/v1/user/self', basicAuthMiddleware, async (req, res) => {
    
   })
   module.exports ={ app,server};
+  
 
 
  
