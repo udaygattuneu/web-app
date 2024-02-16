@@ -2,9 +2,13 @@ const supertest = require('supertest');
 const app = require('../src/api'); 
 const request = supertest(app);
 
+
+
+
 describe('User API Integration Tests with Basic Authentication', () => {
+  const uniqueTimeStamp = Date.now();
   const userData = {
-    email: 'testuser@example.com',
+    email: `testuser${uniqueTimeStamp}@example.com`,
     password: 'Test1234!',
     firstName: 'Test',
     lastName: 'User'
@@ -42,4 +46,5 @@ describe('User API Integration Tests with Basic Authentication', () => {
     expect(response.body.firstName).toEqual(updateData.firstName);
     expect(response.body.lastName).toEqual(updateData.lastName);
   });
+
 });
