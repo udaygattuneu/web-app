@@ -107,7 +107,12 @@ jobs:
         node-version: '16.x' # Choose the Node.js version that matches your development environment
     
     - name: Install dependencies
-      run: npm install
+      run:  
+        npm install
+        npm install mysql2
+        npm install sequelize
+        npm install sqlite3
+
       
     - name: Wait for MySQL
       run: |
@@ -120,8 +125,8 @@ jobs:
         NODE_ENV: test
         DB_HOST: 127.0.0.1
         DB_USER: root
-        DB_PASSWORD: MYSQL_ROOT_PASSWORD
-        DB_NAME: MYSQL_DATABASE
+        DB_PASSWORD: password
+        DB_NAME: testdb
         DB_DIALECT: mysql
       run: npm test
 
