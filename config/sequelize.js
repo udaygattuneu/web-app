@@ -17,6 +17,6 @@ const sequelize = new Sequelize(dbPool.DB, dbPool.USER, dbPool.PASSWORD, {
 const db = {};
 
 db.Sequelize = Sequelize;
-db.sequelize = sequelize;
+// db.sequelize = sequelize;
 
 module.exports = db;

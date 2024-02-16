@@ -1,10 +1,13 @@
-require('dotenv').config();
+// require('dotenv').config();
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+const validator = require('validator');
 const { response } = require('express');
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const dbPool = require('../config/sequelize');
 const app = express();
-const port = 3005;
+const port = 3004;
 const bodyParser = require('body-parser');
 const db = require('../models')
 app.use(bodyParser.json());
@@ -23,12 +26,27 @@ app.use((request, response, next) => {
     }
   });
 
+  app.get('/healthz', async (req, res) => {
+    try {
+      await db.sequelize.authenticate(); // Try to authenticate with the database
+      res.status(200).send(); // If successful, send a 200 status code
+    } catch (error) {
+      console.error('Database connection failed:', error);
+      res.status(503).send(); // If there's an error, send a 503 status code
+    }
+  });
+  
+
   
   app.post('/v1/user',async(req,res)=>{
     try{
         const {email,password,firstName,lastName} = req.body;
         if (!email || !password || !firstName || !lastName) {
           return res.status(400).send("Bad Request: Missing required fields.");
+      }
+      else if( !validator.isEmail(email)){
+        return res.status(400).send("Bad Request: Missing required fields.");
+
       }
         const hashedpassword = await bcrypt.hash(password,10);
         const user = await db.models.user.create({
@@ -187,6 +205,7 @@ app.put('/v1/user/self', basicAuthMiddleware, async (req, res) => {
       }
     } catch (error) {
       //database not available 
+      console.error(error)
       response.status(503).send();
     } finally {
       if (client) {
@@ -225,14 +244,16 @@ app.put('/v1/user/self', basicAuthMiddleware, async (req, res) => {
       console.error('Unable to connect to the database:', error);
     }
      
-  app.listen(port,() => {
-  
+   
+
+  })();
+  const server =app.listen(port,() => {
+
     console.log(`Server Started at Port ${port}`) 
    
   })
-
-  })();
-
+  module.exports ={ app,server};
+  
 
 
  
