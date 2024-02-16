@@ -47,11 +47,11 @@ describe('User API Integration Tests with Basic Authentication', () => {
     expect(response.body.lastName).toEqual(updateData.lastName);
   });
 
-  afterAll((done)=>{
-    server.close(()=>{
-      console.log("server closed");
-      done();
-    })
-  })
+  // afterAll((done)=>{
+  //   server.close(()=>{
+  //     console.log("server closed");
+  //     done();
+  //   })
+  // })
 
 });
