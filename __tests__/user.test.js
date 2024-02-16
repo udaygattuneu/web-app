@@ -5,6 +5,7 @@ const request = supertest(app);
 
 
 
+
 describe('User API Integration Tests with Basic Authentication', () => {
   const uniqueTimeStamp = Date.now();
   const userData = {
@@ -13,8 +14,10 @@ describe('User API Integration Tests with Basic Authentication', () => {
     firstName: 'Test',
     lastName: 'User'
   };
-  
+
   const encodedCredentials = Buffer.from(`${userData.email}:${userData.password}`).toString('base64');
+
+ 
 
   it('should create a user successfully', async () => {
     const response = await request.post('/v1/user').send(userData);

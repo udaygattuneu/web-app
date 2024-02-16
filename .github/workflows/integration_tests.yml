@@ -76,58 +76,100 @@
 #       run: npm test
 
 
-name: Integration Tests
+# name: Integration Tests
 
-on: [pull_request]
+# on: [pull_request]
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
     
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: testdb
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -password"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+#     services:
+#       mysql:
+#         image: mysql:5.7
+#         env:
+#           MYSQL_ROOT_PASSWORD: password
+#           MYSQL_DATABASE: testdb
+#         ports:
+#           - 3306:3306
+#         options: >-
+#           --health-cmd="mysqladmin ping -h 127.0.0.1 -password"
+#           --health-interval=10s
+#           --health-timeout=5s
+#           --health-retries=5
 
-    steps:
-    - uses: actions/checkout@v2
+#     steps:
+#     - uses: actions/checkout@v2
     
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16.x' # Choose the Node.js version that matches your development environment
+#     - name: Set up Node.js
+#       uses: actions/setup-node@v2
+#       with:
+#         node-version: '16.x' # Choose the Node.js version that matches your development environment
     
-    - name: Install dependencies
-      run:  
-        npm install
-        npm install mysql2
-        npm install sequelize
-        npm install sqlite3
+#     - name: Install dependencies
+#       run:  
+#         npm install
+#         npm install mysql2
+#         npm install sequelize
+#         npm install sqlite3
 
       
-    - name: Wait for MySQL
-      run: |
-        until mysqladmin ping -h "127.0.0.1" --silent; do
-          sleep 1
-        done
+#     - name: Wait for MySQL
+#       run: |
+#         until mysqladmin ping -h "127.0.0.1" --silent; do
+#           sleep 1
+#         done
     
-    - name: Run integration tests
-      env:
-        NODE_ENV: test
-        DB_HOST: 127.0.0.1
-        DB_USER: root
-        DB_PASSWORD: password
-        DB_NAME: testdb
-        DB_DIALECT: mysql
-      run: npm test
+#     - name: Run integration tests
+#       env:
+#         NODE_ENV: test
+#         DB_HOST: 127.0.0.1
+#         DB_USER: root
+#         DB_PASSWORD: password
+#         DB_NAME: testdb
+#         DB_DIALECT: mysql
+#       run: npm test
 
 
+name: Integration Tests
+ 
+env:
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASS: ${{ secrets.DB_PASSWORD }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+ 
+on:
+  pull_request:
+    branches:
+      - main
+  
+  # push:
+  #   branches:
+  #     - A3
+ 
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name : Install MySQL
+        run: |
+          sudo apt-get update
+          sudo systemctl start mysql.service
+          sudo mysql --user=${{ secrets.DB_USER }} --password=${{ secrets.DB_PASS }} -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
+ 
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+ 
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+ 
+      - name: Install Dependencies
+        run: npm install
+ 
+      - name: Run Tests
+        run: npm test
