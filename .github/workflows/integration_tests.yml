@@ -118,7 +118,7 @@ jobs:
     - name: Run integration tests
       env:
         NODE_ENV: test
-        host: 127.0.0.1
+        host: localhost
         user: root
         password: password
         db_name: testdb
