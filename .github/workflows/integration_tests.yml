@@ -32,13 +32,58 @@
 #       run: npm test
 
 
+# name: Integration Tests
+
+# on: [push, pull_request]
+
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     services:
+#       mysql:
+#         image: mysql:5.7
+#         env:
+#           MYSQL_ROOT_PASSWORD: password
+#           MYSQL_DATABASE: testdb
+#         ports:
+#           - 3306:3306
+#         options: --health-cmd="mysqladmin ping -h localhost -ppassword" --health-interval=10s --health-timeout=5s --health-retries=5
+
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Set up Node.js
+#       uses: actions/setup-node@v2
+#       with:
+#         # Use a valid LTS version of Node.js
+#         node-version: '21.x'
+#     - name: Install dependencies
+#       run: npm install
+#     - name: Wait for MySQL
+#       run: |
+#         until mysqladmin ping -h "127.0.0.1" --silent; do
+#           echo 'waiting for mysql to be available...'
+#           sleep 2
+#         done
+#       env:
+#         MYSQL_ROOT_PASSWORD: password
+#     - name: Run integration tests
+#       env:
+#         host: 127.0.0.1
+#         user: root
+#         password: password
+#         db_name: testdb
+#         dialect: mysql
+#       run: npm test
+
+
 name: Integration Tests
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    
     services:
       mysql:
         image: mysql:5.7
@@ -47,30 +92,37 @@ jobs:
           MYSQL_DATABASE: testdb
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping -h localhost -ppassword" --health-interval=10s --health-timeout=5s --health-retries=5
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -ppassword"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
     - uses: actions/checkout@v2
+    
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        # Use a valid LTS version of Node.js
-        node-version: '21.x'
+        node-version: '21.x' # Choose the Node.js version that matches your development environment
+    
     - name: Install dependencies
       run: npm install
+      
     - name: Wait for MySQL
       run: |
         until mysqladmin ping -h "127.0.0.1" --silent; do
-          echo 'waiting for mysql to be available...'
-          sleep 2
+          sleep 1
         done
-      env:
-        MYSQL_ROOT_PASSWORD: password
+    
     - name: Run integration tests
       env:
+        NODE_ENV: test
         host: 127.0.0.1
         user: root
         password: password
         db_name: testdb
         dialect: mysql
       run: npm test
+
+
