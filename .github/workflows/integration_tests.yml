@@ -118,11 +118,11 @@ jobs:
     - name: Run integration tests
       env:
         NODE_ENV: test
-        host: 127.0.0.1
-        user: root
-        password: password
-        db_name: testdb
-        dialect: mysql
+        DB_HOST: 127.0.0.1
+        DB_USER: root
+        DB_PASSWORD: password
+        DB_NAME: testdb
+        DB_DIALECT: mysql
       run: npm test
 
 
