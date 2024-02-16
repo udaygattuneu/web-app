@@ -232,14 +232,15 @@ app.put('/v1/user/self', basicAuthMiddleware, async (req, res) => {
       console.error('Unable to connect to the database:', error);
     }
      
-  app.listen(port,() => {
+
+
+  })();
+  const server =app.listen(port,() => {
 
     console.log(`Server Started at Port ${port}`) 
    
   })
-
-  })();
-  module.exports = app;
+  module.exports ={ app,server};
 
 
  

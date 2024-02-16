@@ -1,5 +1,5 @@
 const supertest = require('supertest');
-const app = require('../src/api'); 
+const {app,server} = require('../src/api'); 
 const request = supertest(app);
 
 
@@ -46,5 +46,12 @@ describe('User API Integration Tests with Basic Authentication', () => {
     expect(response.body.firstName).toEqual(updateData.firstName);
     expect(response.body.lastName).toEqual(updateData.lastName);
   });
+
+  afterAll((done)=>{
+    server.close(()=>{
+      console.log("server closed");
+      done();
+    })
+  })
 
 });
