@@ -124,7 +124,9 @@
 //   });
 // });
 
+// 
 const supertest = require('supertest');
+const mysql = require('mysql2/promise'); // Ensure mysql2 is installed for this
 const { app, server } = require('../src/api');
 const request = supertest(app);
 
@@ -140,41 +142,44 @@ describe('User API Integration Tests with Basic Authentication', () => {
   const encodedCredentials = Buffer.from(`${userData.email}:${userData.password}`).toString('base64');
 
   beforeAll(async () => {
-    // Optionally, add logic here to ensure the test environment is correctly set up,
-    // such as clearing the database of test users or ensuring necessary services are running.
-    console.log('Setup test environment');
+    console.log('Setting up test environment, including database cleanup');
+    
+    // Database setup: Ensure these values are set in your GitHub Actions workflow environment or use a .env file for local testing
+    const connection = await mysql.createConnection({
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+    });
+
+    // Example cleanup query - adjust according to your schema and needs
+    await connection.query('DELETE FROM users WHERE email LIKE "testuser%"');
+    await connection.end();
+
+    // Additional setup steps if necessary
   });
 
   it('should create a user successfully', async () => {
-    console.log('Creating a user');
     const response = await request.post('/v1/user').send(userData);
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('email', userData.email);
-    console.log('User created successfully');
   });
 
   it('should fetch the created user successfully using basic auth', async () => {
-    console.log('Fetching the created user');
-    // Wait a moment to ensure the user creation has propagated
-    await new Promise(resolve => setTimeout(resolve, 1000));
     const response = await request
       .get(`/v1/user/self`)
       .set('Authorization', `Basic ${encodedCredentials}`);
 
     expect(response.status).toBe(200);
     expect(response.body.email).toBe(userData.email);
-    console.log('User fetched successfully');
   });
 
   it('should update the created user successfully using basic auth', async () => {
-    console.log('Updating the created user');
     const updateData = {
       firstName: 'UpdatedName',
       lastName: 'UpdatedLastName'
     };
 
-    // Wait a moment to ensure previous operations have completed
-    await new Promise(resolve => setTimeout(resolve, 1000));
     const response = await request
       .put(`/v1/user/self`)
       .set('Authorization', `Basic ${encodedCredentials}`)
@@ -183,11 +188,10 @@ describe('User API Integration Tests with Basic Authentication', () => {
     expect(response.status).toBe(200);
     expect(response.body.firstName).toEqual(updateData.firstName);
     expect(response.body.lastName).toEqual(updateData.lastName);
-    console.log('User updated successfully');
   });
 
   afterAll((done) => {
-    console.log('All tests completed, shutting down the server');
+    console.log('Cleaning up after tests, shutting down the server');
     server.close(() => {
       console.log("Server closed");
       done();
