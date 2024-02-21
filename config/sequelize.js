@@ -1,22 +1,17 @@
-const dbPool = require("../src/db-config");
 
-const Sequelize = require("sequelize");
-const sequelize = new Sequelize(dbPool.DB, dbPool.USER, dbPool.PASSWORD, {
-  host: dbPool.HOST,
-  dialect: dbPool.dialect,
-  logging: false,
+import Sequelize from 'sequelize';
+import dotenv from 'dotenv';
 
-  pool: {
-    max: dbPool.pool.max,
-    min: dbPool.pool.min,
-    acquire: dbPool.pool.acquire,
-    idle: dbPool.pool.idle
-  }
+
+dotenv.config();
+
+const sequelize = new Sequelize(
+    process.env.DATABASE_Name, 
+    process.env.DATABASE_USER, 
+    process.env.DATABASE_PASSWORD, {
+    host: process.env.DB_HOSTNAME,
+    dialect: 'mysql',
+    logging: false 
 });
 
-const db = {};
-
-db.Sequelize = Sequelize;
-// db.sequelize = sequelize;
-
-module.exports = db;
+export default sequelize;
