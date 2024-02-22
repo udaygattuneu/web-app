@@ -33,11 +33,11 @@ sudo cp /tmp/web-app.zip /opt
  cd /opt || exit
  sudo unzip web-app.zip
  
-    cd web-app/ || exit
+   #  cd web-app/ || exit
     sudo chown -R csye6225:csye6225 /opt/web-app
  
     sudo chmod -R 750 /opt/web-app
-    # Install Node.js and 
+
     cd /opt/webapp || exit
 
     sudo npm install
