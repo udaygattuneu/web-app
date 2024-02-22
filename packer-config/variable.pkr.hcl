@@ -18,12 +18,3 @@ variable "source_image_family" {
   type        = string
   default = "centos-stream-8"
 }
-
-
-// variable "ssh_username" {
-//   description = "The username for SSH access"
-//   type        = string
-//   default = "centos"
-// }
-
-
