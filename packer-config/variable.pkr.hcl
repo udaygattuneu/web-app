@@ -18,4 +18,3 @@ variable "source_image_family" {
   type        = string
   default = "centos-stream-8"
 }
-
