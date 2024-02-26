@@ -13,7 +13,7 @@ async function healthCheck(req, res) {
         res.sendStatus(503).send();
     }
 }
-
+// 
 async function registerUser(req, res) {
     const { username, password, firstName, lastName } = req.body;
 

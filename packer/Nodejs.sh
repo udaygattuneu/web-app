@@ -7,6 +7,8 @@ sudo dnf install -y mysql-server
 sudo systemctl enable mysqld
 sudo systemctl start mysqld
  
+
+ 
  
 # Set root user password for MySQL
 sudo mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Uday123@';

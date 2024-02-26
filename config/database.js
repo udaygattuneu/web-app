@@ -19,6 +19,6 @@ const sequelize = new Sequelize(
     dialect: 'mysql',
     logging: false 
 });
-
+//
 export default sequelize;
 
