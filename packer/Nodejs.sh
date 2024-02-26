@@ -14,7 +14,7 @@ CREATE DATABASE IF NOT EXISTS db1; SHOW GRANTS FOR 'root'@'localhost';"
 sudo firewall-cmd --zone=public --add-port=3306/tcp --permanent
 sudo firewall-cmd --reload
 
- 
+ #
 sudo groupadd -f csye6225
  
 # Create user csye6225 and add to group csye6225
