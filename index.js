@@ -29,7 +29,7 @@ let retries = 3;
 const delay = 5000; // Delay in milliseconds
 
 function syncDatabase(retriesLeft = retries) {
-  sequelize.sync().then(() => {
+  sequelize.sync({force : true}).then(() => {
     console.log('Database schema synchronized successfully.');
     app.listen(5002, () => {
       console.log(`Server is running on port 5002}`);
