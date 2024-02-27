@@ -19,7 +19,7 @@ after(async () => {
 });
 
 
-describe('User API',  async function() {
+describe('User API',   function() {
   
   it('Test 1 - Create an account, and using the GET call, validate account exists', async function() {
     const userData = {

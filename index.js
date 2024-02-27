@@ -16,7 +16,7 @@ app.use(router);
 
 
 const portt = 5002;
-sequelize.sync().then(() => {
+sequelize.sync({force:true}).then(() => {
   console.log('Database bootstrapped successfully');
   app.listen(portt, () => {
     console.log(`Server is running on port ${portt}`);
@@ -25,3 +25,5 @@ sequelize.sync().then(() => {
   console.error('Unable to sync the database:', error);
 });
 export default app;
+
+
