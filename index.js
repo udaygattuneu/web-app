@@ -41,13 +41,12 @@ function syncDatabase(retriesLeft = retries) {
       setTimeout(() => syncDatabase(retriesLeft - 1), delay);
     } else {
       console.error('All retry attempts failed. Exiting the application...');
-      // Exit the application or any other logic to handle the failure
+
       process.exit(1);
     }
   });
 }
 
-// Initial call to the function
 syncDatabase();
 
 
