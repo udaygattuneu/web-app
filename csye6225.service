@@ -1,6 +1,6 @@
 [Unit]
-Description=CSYE 6225 api.js
-ConditionPathExists=/opt/web-app/api.js
+Description=CSYE 6225 index.js
+ConditionPathExists=/opt/web-app/index.js
 After=network.target
 
 [Service]
@@ -9,7 +9,7 @@ User=csye6225
 Group=csye6225
 WorkingDirectory=/opt/web-app
 EnvironmentFile=/opt/web-app/.env
-ExecStart=/usr/bin/node /opt/web-app/api.js
+ExecStart=/usr/bin/node /opt/web-app/index.js
 Restart=always
 RestartSec=3
 StandardOutput=syslog
@@ -18,4 +18,3 @@ SyslogIdentifier=csye6225
 
 [Install]
 WantedBy=multi-user.target
-

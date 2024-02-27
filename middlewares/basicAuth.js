@@ -1,23 +1,20 @@
 
+
 import basicAuth from 'basic-auth';
 import bcrypt from 'bcrypt';
 
-const authenticate = async (req, User) => {
-  const credentials = basicAuth(req); 
-  console.log(credentials);
-  const isValid = await isValidCredentials(credentials, User);
-  return isValid; 
+
+const authenticateUser = async (request, user) => {
+  const credentials = basicAuth(request);
+  if (!credentials || !user) return false;
+
+  return await checkCredentials(credentials, user);
 };
 
-const isValidCredentials = async (credentials, User) => {
-  console.log(User);
-  
-  if (credentials && User) {
-    const match = await bcrypt.compare(credentials.pass, User.password);
-    return credentials.name === User.username && match;
-  }
-  return false;
+const checkCredentials = async ({ name, pass }, user) => {
+  const passwordMatches = await bcrypt.compare(pass, user.password);
+  return name === user.username && passwordMatches;
 };
 
-
-export default authenticate;
+export default authenticateUser;
+// 
