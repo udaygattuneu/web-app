@@ -16,4 +16,4 @@ const checkCredentials = async ({ name, pass }, user) => {
 };
 
 export default authenticateUser;
-// 
+
