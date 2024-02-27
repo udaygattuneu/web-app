@@ -5,8 +5,7 @@ variable "project_id" {
 }
 variable "zone" {
   description = "The GCP zone where the image will be built"
-  type        = string
-  default     = "us-east4-a"
+  type        = number
 }
 variable "image_name" {
   description = "The name of the resulting custom image"
