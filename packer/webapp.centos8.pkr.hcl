@@ -24,7 +24,7 @@ build {
     destination = "/tmp/csye6225.service"
   }
   provisioner "file" {
-    source      = "../packer/Nodejs.sh"
+    source      =                "../packer/Nodejs.sh"
     destination = "/tmp/Nodejs.sh"
   }
   provisioner "file" {
