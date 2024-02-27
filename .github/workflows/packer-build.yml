@@ -43,6 +43,7 @@ jobs:
     
     - name: Initialize Packer
       run: packer init .
+      working-directory: ./packer
     
     - name: Format Packer template
       run: |
@@ -51,9 +52,12 @@ jobs:
           echo "Packer templates need formatting. Run 'packer fmt' locally and push the changes."
           exit 1
         fi
+      working-directory: ./packer
     
     - name: Validate Packer template
       run: packer validate .
+      working-directory: ./packer
     - 
       name: Build Packer image
       run: packer build  .
+      working-directory: ./packer
