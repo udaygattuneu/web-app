@@ -52,7 +52,7 @@ jobs:
           echo "Packer templates need formatting. Run 'packer fmt' locally and push the changes."
           exit 1
         fi
-      working-directory: packer
+      working-directory: ./packer
 
     
     - name: Validate Packer template
