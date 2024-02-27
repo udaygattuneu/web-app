@@ -20,15 +20,19 @@ build {
   sources = ["source.googlecompute.Webapp-packer"]
 
   provisioner "file" {
-    source      = "/Users/udaygattu/Documents/Cloud/assign3/web-app/csye6225.service"
+    source      = "./csye6225.service"
     destination = "/tmp/csye6225.service"
   }
   provisioner "file" {
-    source      = "/Users/udaygattu/Documents/Cloud/assign3/web-app/packer/Nodejs.sh"
+    source      = "./packer/Nodejs.sh"
     destination = "/tmp/Nodejs.sh"
   }
+  provisioner "file"{
+    source = "./env"
+    destination = "/tmp/.env"
+  }
   provisioner "file" {
-    source      = "/Users/udaygattu/Documents/Cloud/assign3/web-app.zip"
+    source      = "./web-app.zip"
     destination = "/tmp/web-app.zip"
   }
 
