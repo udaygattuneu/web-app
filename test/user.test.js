@@ -1,9 +1,8 @@
 
 import supertest from 'supertest';
 import { expect } from 'chai';
-import app from '../api.js';
-import sequelize from '../config/sequelize.js'; 
-
+import app from '../index.js';
+import sequelize from '../config/database.js'; 
 const request = supertest(app);
 
 
@@ -24,10 +23,10 @@ describe('User API',  async function() {
   
   it('Test 1 - Create an account, and using the GET call, validate account exists', async function() {
     const userData = {
-      username: 'test5@example.com',
+      username: 'test@example.com',
       password: 'Password123@',
-      firstName: 'John',
-      lastName: 'Doe'
+      firstName: 'srinivas',
+      lastName: 'varma'
     };
 
     
@@ -53,16 +52,16 @@ describe('User API',  async function() {
 
    it('Test 2 - Update the account and using the GET call, validate the account was updated', async function() {
     const userData = {
-      username: 'test5@example.com',
+      username: 'test@example.com',
       password: 'Password123@',
-      firstName: 'John',
-      lastName: 'Doe'
+      firstName: 'uday',
+      lastName: 'gattu'
     };
     const userDataUpdate = {
-        username: 'test5@example.com',
+        username: 'test@example.com',
         password: 'Password123@2344',
-        firstName: 'JohnDa4',
-        lastName: 'Doe'
+        firstName: 'nikhil',
+        lastName: 'mamidi'
       };
 
       const createResponse = await request
