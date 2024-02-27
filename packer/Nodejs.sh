@@ -8,6 +8,7 @@ sudo systemctl enable mysqld
 sudo systemctl start mysqld
  
 
+
  
  
 # Set root user password for MySQL
