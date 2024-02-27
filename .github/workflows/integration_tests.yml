@@ -1,5 +1,6 @@
 name: Integration Tests
- 
+
+
 env:
     DATABASE_HOSTNAME: ${{ secrets.DB_HOST }}
     DATABASE_USER: ${{ secrets.DB_USER }}
