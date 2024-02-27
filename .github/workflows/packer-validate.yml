@@ -52,8 +52,8 @@ jobs:
           echo "Packer templates need formatting. Run 'packer fmt' locally and push the changes."
           exit 1
         fi
-      working-directory: web-app/packer
+      # working-directory: web-app/packer
     
     - name: Validate Packer template
       run: packer validate .
-      working-directory: web-app/packer
+      # working-directory: web-app/packer
