@@ -15,15 +15,48 @@ app.use(router);
 
 
 
-const portt = 5002;
-sequelize.sync({ force:true}).then(() => {
-  console.log('Database bootstrapped successfully');
-  app.listen(portt, () => {
-    console.log(`Server is running on port ${portt}`);
+
+// sequelize.sync().then(() => {
+//   console.log('Database bootstrapped successfully');
+//   app.listen(5002, () => {
+//     console.log(`Server is running on port 5002}`);
+//   });
+// }).catch((error) => {
+//   console.error('Unable to sync the database:', error);
+// });
+
+let retries = 3;
+const delay = 5000; // Delay in milliseconds
+
+function syncDatabase(retriesLeft = retries) {
+  sequelize.sync().then(() => {
+    console.log('Database schema synchronized successfully.');
+    app.listen(5002, () => {
+      console.log(`Server is running on port 5002}`);
+    });
+  }).catch((error) => {
+    console.error('Unable to sync the database:', error);
+    if (retriesLeft > 0) {
+      console.log(`Retrying... (${retriesLeft} attempts left)`);
+      setTimeout(() => syncDatabase(retriesLeft - 1), delay);
+    } else {
+      console.error('All retry attempts failed. Exiting the application...');
+      // Exit the application or any other logic to handle the failure
+      process.exit(1);
+    }
   });
-}).catch((error) => {
-  console.error('Unable to sync the database:', error);
-});
+}
+
+// Initial call to the function
+syncDatabase();
+
+
+
+
+
+
+
 export default app;
+
 
 
