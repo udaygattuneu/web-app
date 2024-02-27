@@ -7,11 +7,16 @@ sudo dnf install -y mysql-server
 sudo systemctl enable mysqld
 sudo systemctl start mysqld
  
- 
-# Set root user password for MySQL
-sudo mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Uday_Sql23@'; CREATE DATABASE api;"
 
  
+ 
+# Set root user password for MySQL
+sudo mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Uday123@';
+CREATE DATABASE IF NOT EXISTS db1; SHOW GRANTS FOR 'root'@'localhost';"
+sudo firewall-cmd --zone=public --add-port=3306/tcp --permanent
+sudo firewall-cmd --reload
+
+ #
 sudo groupadd -f csye6225
  
 # Create user csye6225 and add to group csye6225
@@ -32,15 +37,18 @@ sudo dnf install -y npm
 sudo cp /tmp/web-app.zip /opt
  cd /opt || exit
  sudo unzip web-app.zip
- 
-   #  cd web-app/ || exit
+ sudo cp /tmp/web-app/.env /opt/web-app/.env
+    cd web-app/ || exit
     sudo chown -R csye6225:csye6225 /opt/web-app
  
     sudo chmod -R 750 /opt/web-app
-
-    cd /opt/webapp || exit
-
+    # Install Node.js and npm
+   #  sudo cd /opt/web-app || exit
     sudo npm install
+    sudo npm uninstall bcrypt
+
+    sudo npm install bcrypt@5.1.1
+    sudo npm install --build-from-source=false
  
     sudo npm test
  
