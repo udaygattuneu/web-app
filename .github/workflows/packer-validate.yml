@@ -43,7 +43,7 @@ jobs:
             sudo apt-get update && sudo apt-get install packer
     - name: Initialize Packer
       run: packer init .
-      working-directory: web-app/packer
+      working-directory: ./packer
     
     - name: Format Packer template
       run: |
@@ -52,8 +52,8 @@ jobs:
           echo "Packer templates need formatting. Run 'packer fmt' locally and push the changes."
           exit 1
         fi
-      working-directory: web-app/packer
+      working-directory: ./packer
     
     - name: Validate Packer template
       run: packer validate .
-      working-directory: web-app/packer
+      working-directory: ./packer
