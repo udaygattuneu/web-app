@@ -1,54 +1,49 @@
-name: Packer CI
-
+name: Packer Build
+  
 on:
-    pull_request:
-      types: [closed]
-    push:
-
-        branches: [main]
-
-
-
+  pull_request:
+    types: [closed]
 
 jobs:
-  packer_ci:
-    runs-on: ubuntu-latest
+  build-and-deploy: 
+    if: github.event.pull_request.merged==true
+
+    runs-on: ubuntu-latest 
     
     steps:
     - name: Check out code
       uses: actions/checkout@v3
     
-    
-    - name: Zip all the webApp files
+    - name: Zip all the webapp files
       run: |
-          zip -r webapp.zip ./
-          pwd
+        zip -r web-app.zip ./
+        pwd
+    
     - name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v0.4.0'
       with: 
-        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+    
     - name: Setup Environment File
       run: |
-          cat << EOF > .env
-          DB_HOSTNAME: ${{ secrets.DB_HOST}}
-          DATABASE_USER: ${{ secrets.DB_USER }}
-          DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD}}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DATABASE_Name: ${{ secrets.DB_NAME }}
-          EOF
+        cat << EOF > .env
+        DB_HOST: ${{ secrets.HOST }}
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASS: ${{ secrets.DB_PASSWORD }}
+        DB_PORT: ${{ secrets.DB_PORT }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        EOF
       shell: bash
-
-
+    
     - name: Install Packer
       run: |
-            curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-            sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-            sudo apt-get update && sudo apt-get install packer
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+        sudo apt-get update && sudo apt-get install packer
+    
     - name: Initialize Packer
       run: packer init .
-
-  
-
+      working-directory: ./packer
     
     - name: Format Packer template
       run: |
@@ -57,5 +52,12 @@ jobs:
           echo "Packer templates need formatting. Run 'packer fmt' locally and push the changes."
           exit 1
         fi
+      working-directory: ./packer
+    
     - name: Validate Packer template
       run: packer validate .
+      working-directory: ./packer
+    - 
+      name: Build Packer image
+      run: packer build  .
+      working-directory: ./packer
