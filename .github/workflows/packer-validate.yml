@@ -53,6 +53,7 @@ jobs:
           exit 1
         fi
       working-directory: ./packer
+
     
     - name: Validate Packer template
       run: packer validate .
