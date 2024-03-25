@@ -32,8 +32,8 @@ build {
   //   destination = "/tmp/.env"
   // }
   provisioner "file" {
-    source      = "../web-app.zip"
-    destination = "/tmp/web-app.zip"
+    source      = "../web-App.zip"
+    destination = "/tmp/web-App.zip"
   }
 
   provisioner "shell" {
