@@ -48,6 +48,7 @@ sudo cp /tmp/web-app.zip /opt/web-app.zip
    #  sudo cd /opt/web-app || exit
     sudo npm install
     sudo npm uninstall bcrypt
+    sudo npm install winston
 
     sudo npm install bcrypt@5.1.1
     sudo npm install --build-from-source=false
