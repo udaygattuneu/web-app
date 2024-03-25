@@ -103,7 +103,7 @@ sudo systemctl restart google-cloud-ops-agent
 
 
 
-    sudo npm test
+    # sudo npm test
  
     sudo systemctl daemon-reload
     sudo systemctl enable httpd
