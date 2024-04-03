@@ -45,73 +45,74 @@ function generateVerificationLink(userId, expiresTime) {
       logger.error(`Failed to publish verification email message for user ${userId}`, error);
     }
   }
-const healthCheck = async(req,res)=>{
+  const healthCheck = async (req, res) => {
     try {
-        await sequelize.authenticate();
-        logger.debug({
-            severity: "DEBUG",
-            message: "Trying to connect database",
-          });
-        logger.info({
-            severity: 'INFO',
-            message: 'Database sucessfully connected'
-          });
-        res.sendStatus(200).send();
+      await sequelize.authenticate();
+      
+      logger.debug({
+        severity: "DEBUG",
+        message: "Trying to connect database",
+      });
+      logger.info({
+        severity: "INFO",
+        message: "Database connection successful",
+      });
+      res.status(200).send();
     } catch (error) {
-        logger.error({
-            severity: 'ERROR',
-            message: 'Database Connection failed'
-          });
-        res.sendStatus(503).send();
+      logger.error({
+        severity: "ERROR",
+        message: "Database connection failed",
+      });
+      res.status(503).send();
     }
-}
-// 
-const registerUser = async(req,res)=>{
-
-    const { username, password, firstName, lastName } = req.body;
-
+  };
+  
+  const createUser = async (req, res) => {
     try {
-        const userExists = await User.findOne({ where: { username } });
-        if (userExists){ 
-            logger.warn({
-                severity: 'WARN',
-                message: 'Attempt to create a user that already exists'
-              });
-            return res.status(400).send('User already exists.');}
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await User.create({
-            username,
-            password: hashedPassword,
-            firstName,
-            lastName,
-            account_created: new Date(),
-            account_updated: new Date(),
-        });
-        await publishVerificationMessage(newUser.id, username , firstName, lastName);
-        await newUser.update({ mailSentAt: new Date() });
-        logger.info({
-            severity: 'INFO',
-            message: 'sucessfully user created'
-          });
-        res.status(201).json({
-            id: newUser.id,
-            username: newUser.username,
-            firstName: newUser.firstName,
-            lastName: newUser.lastName,
-            accountCreated: newUser.account_created,
-            accountUpdated: newUser.account_updated,
-        });
-    } catch (error) {
-        logger.warn({
+        const { username, password, firstName, lastName } = req.body; 
+    
+        const existingUser = await User.findOne({ where: { username } });
+        if (existingUser) {
+          logger.warn({
             severity: 'WARN',
-            message: 'Invalid details provided'
+            message: 'Attempt to create a user that already exists'
           });
-        res.status(400).send('Invalid details provided.');
-    }
-}
-
-const verifyUser = async (req, res) => {
+          return res.status(400).send('User already exists with this username.');
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await User.create({
+          username,
+          password: hashedPassword,
+          firstName, 
+          lastName, 
+          account_created: new Date(),
+          account_updated: new Date()
+        });
+        await publishVerificationMessage(user.id, username , firstName, lastName);
+        await user.update({ mailSentAt: new Date() });
+  
+        logger.info({
+          severity: 'INFO',
+          message: 'user created sucessfully'
+        }); 
+        res.status(201).json({
+          id: user.id,
+          username: user.username,
+          firstName: user.firstName, 
+          lastName: user.lastName, 
+          accountCreated: user.account_created,
+          accountUpdated: user.account_updated
+        });
+      } catch (error) {
+         console.error(error);
+         logger.error({
+          severity: 'ERROR',
+          message: 'User creation failed'
+        });
+        res.status(400).send('please enter valid details');
+      }
+  };
+  const verifyUser = async (req, res) => {
     const { id, token } = req.query; // Use a token instead of an expiration time
   
     if (!id) {
@@ -136,11 +137,6 @@ const verifyUser = async (req, res) => {
         logger.warn(`User not found during verification: ${id}`);
         return res.status(404).json({ message: 'User not found.' });
       }
-  
-      if (user.verificationToken !== token || new Date() > user.tokenExpires) {
-        return res.status(400).json({ message: 'Invalid or expired verification token.' });
-      }
-  
       if (user.isEmailVerified) {
         logger.info(`User already verified: ${id}`);
         return res.status(400).json({ message: 'User already verified.' });
@@ -157,6 +153,8 @@ const verifyUser = async (req, res) => {
       res.status(500).json({ message: 'Failed to verify email.' });
     }
   };
+  
+  
   const verifyEmail = async (req, res) => {
     const { token } = req.query;
   
@@ -168,22 +166,20 @@ const verifyUser = async (req, res) => {
       const user = await User.findOne({
         where: { verificationToken: token }
       });
-      const timestamp=user.mailSentAt;
-    const currenttime= new Date();
-    const differnece=(currenttime-new Date(timestamp))
-    if(differnece>2) 
-    {
+      const timestamp = user.mailSentAt;
+  const currentTime = new Date();
+  const difference = (currentTime - timestamp) / 1000 / 60; // Difference in minutes
+  
+  
+  if (difference <= 2) {
+   
       user.isEmailVerified = true;
       await user.save();
-      return res.status(400).json({message:'verified'})
-      
-    }
-  
-    else{
-      user.isEmailVerified = false;
-      await user.save();
-        return res.status(404).json({ message: 'Invalid or expired verification token.' });
-      }
+      return res.status(200).json({ message: 'Email successfully verified.' });
+  } else {
+     
+      return res.status(400).json({ message: 'Verification link expired. Please request a new verification link.' });
+  }
   
   
     } catch (error) {
@@ -191,147 +187,159 @@ const verifyUser = async (req, res) => {
       res.status(500).json({ message: 'Internal server error during verification.' });
     }
   };
-
-const fetchUser =async(req,res)=>{
-    if (Object.keys(req.body).length !== 0) {
-        logger.warn({
-            severity: 'WARN',
-            message: 'request body must be empty'
-          });
-        return res.status(400).send("Request body must be empty.");}
-
-    const credentials = basicAuth(req);
-    if (!credentials) {
-        logger.warn({
-            severity: 'WARN',
-            message: 'Authentication required.'
-          });
-        return res.status(401).send("Authentication required.");}
-
-    try {
-        const user = await User.findOne({ where: { username: credentials.name } });
-        if (user === null) {
-          logger.warn({
-            severity: "WARN",
-            message: "unauthorised access attempt of user",
-          });
-          return res.status(401).send("Unauthorized user.");
-        }
-        if (!user) {
-            logger.warn({
-                severity: 'WARN',
-                message: 'Unauthorized access.'
-              });
-            return res.status(401).send("Unauthorized access.");}
-        
-        const verified = await bcrypt.compare(credentials.pass,user.password);
-        if(!verified){
-            logger.warn({
-                severity:"WARN",
-                message:`Get user failed: Invalid Credentials`,
-            });
-            return res.status(401).json({message:'Invalid Credentials'})
-        }
-        if(!user.isEmailVerified){
-            logger.warn({
-                severity:"WARN",
-                message:`Access denied for unverified user: ${user.username}`
-            });
-            return res.status(403).json({
-                message:`please verify your email address to access this feature.`
-            })
-        }
-
-        const authenticated = await authenticateUser(req, user);
-        if (!authenticated) {
-            logger.warn({
-                severity: 'WARN',
-                message: 'Invalid credentials'
-              });
-            return res.status(401).send("Invalid credentials.");}
-        
-
-        const { password, ...userInfo } = user.toJSON();
-        logger.info({
-            severity: 'INFO',
-            message: 'user sucessfully fetched'
-          });
-        res.json(userInfo);
-    } catch (error) {
-      console.log(error,"1111111111")
-        logger.error({
-            severity: 'ERROR',
-            message: 'error in processing requests'
-          });
-        res.status(500).send("Error processing request.");
+  
+  
+  const getUser = async (req, res) => {
+    if (Object.keys(req.body).length != 0) {
+      logger.warn({
+        severity: "WARN",
+        message: "request body must be empty",
+      });
+      return res.status(400).send("Request body must be empty.");
     }
-}
-const modifyUser = async(req,res)=>{
-
-    const { firstName, lastName, password, username } = req.body;
-
-    if (!firstName && !lastName && !password) {
-        logger.warn({
-            severity: 'WARN',
-            message: 'No update parameters provided'
-          });
-        return res.status(400).send("No update parameters provided.");}
-
+  
     try {
+      const basic = basicAuth(req);
+      if (!basic || !basic.name) {
+        logger.warn({
+          severity: "WARN",
+          message: "authentication credentials not provided",
+        });
+        return res.status(401).send("Authentication credentials not provided.");
+      }
+      const user = await User.findOne({ where: { username: basic.name } });
+      if (user === null) {
+        logger.warn({
+          severity: "WARN",
+          message: "unauthorised access attempt of user",
+        });
+        return res.status(401).send("Unauthorized user.");
+      }
+      if (!user) {
+        logger.warn({
+          severity: "WARN",
+          message: "user not found",
+        });
+        return res.status(401).json({ message: "User not found" });
+      }
+  
+      const verified = await bcrypt.compare(basic.pass, user.password);
+      if (!verified) {
+        logger.warn({
+          severity: "WARN",
+          message: `Get user failed: Invalid Credentials`,
+        });
+  
+        return res.status(401).json({ message: "Invalid Credentials" });
+      }
+  
+      // Check if the user's email has been verified
+      if (!user.isEmailVerified) {
+        logger.warn({
+          severity: "WARN",
+          message: `Access denied for unverified user: ${user.username}`,
+        });
+        return res
+          .status(403)
+          .json({
+            message: "Please verify your email address to access this feature.",
+          });
+      }
+  
+      const auth = await authenticate(req, user);
+      if (!auth) {
+        logger.warn({
+          severity: "WARN",
+          message: "Authentication failed",
+        });
+        return res.status(401).send("Authentication failed.");
+      }
+  
+      const userInfo = user.toJSON();
+      delete userInfo.password;
+      delete userInfo.isEmailVerified;
+      delete userInfo.verificationLink;
+      delete userInfo.mailSentAt;
+      logger.info({
+        severity: "INFO",
+        message: "user authenticated successfully",
+      });
+      res.status(200).json(userInfo);
+    } catch (error) {
+      console.error(error);
+      logger.error({
+        severity: "ERROR",
+        message: "error in getting user",
+      });
+      res.status(500).send("An error occurred during the process.");
+    }
+  };
+  
+  const updateUser = async (req, res) => {
+    const { firstName, lastName, password, username } = req.body;
+    if (!firstName && !lastName && !password) {
+      logger.info({
+        severity: "INFO",
+        message: "attempt to update user",
+      });
+      return res.status(400).send();
+    } else {
+      try {
         const user = await User.findOne({ where: { username } });
         if (!user) {
-            logger.warn({
-                severity: 'WARN',
-                message: 'Cannot change username'
-              });
-            return res.status(400).send('Cannot change username.');}
-
-        const authenticated = await authenticateUser(req, user);
-        if(!user.isEmailVerified){
-            logger.warn({
-                severity:"WARN",
-                message:`Access denied for unverified user ${user.username}`
-            })
-            return res
-                .status(403)
-                .json({
-                    message: 'please verify your email address to access this feature'
-                })
+          logger.warn({
+            severity: "WARN",
+            message: "attempt to update username",
+          });
+          return res.status(400).send("Username cannot be updated.");
         }
-        if (!authenticated) {
-            logger.warn({
-                severity: 'WARN',
-                message: 'Unauthorized access'
-              });
-            return res.status(401).send("Unauthorized access.");}
-
-        await User.update({
-            firstName: firstName || user.firstName,
-            lastName: lastName || user.lastName,
-            password: password ? await bcrypt.hash(password, 10) : user.password,
-            account_updated: new Date(),
-        }, {
-            where: { username },
+        const auth = await authenticate(req, user);
+        if (!user.isEmailVerified) {
+          logger.warn({
+            severity: "WARN",
+            message: `Access denied for unverified user: ${user.username}`,
+          });
+          return res
+            .status(403)
+            .json({
+              message: "Please verify your email address to access this feature.",
+            });
+        }
+        if (!auth) {
+          logger.warn({
+            severity: "WARN",
+            message: "unauthorised update attempt for user",
+          });
+          return res.status(401).send("Unauthorized User");
+        } else {
+          if (firstName) user.firstName = firstName;
+          if (lastName) user.lastName = lastName;
+          if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            user.password = hashedPassword;
+          }
+          user.account_updated = new Date();
+          await user.save();
+          logger.info({
+            severity: "INFO",
+            message: "user details updated sucessfully",
+          });
+  
+          return res.status(204).send("User updated successfully.");
+        }
+      } catch (error) {
+        console.error(error);
+        logger.error({
+          severity: "ERROR",
+          message: "error in updating user",
         });
-        logger.info({
-            severity: 'INFO',
-            message: 'update successful'
-          });
-        res.status(204).send('Update successful.');
-    } catch (error) {
-      console.error('Error updating user:', error);
-        logger.warn({
-            severity: 'WARN',
-            message: 'error updating user'
-          });
-        res.status(400).send('Error updating user.');
+        return res.status(400).json(error.message);
+      }
     }
-}
-
-
-
-export {  healthCheck , registerUser as createUser, fetchUser as getUser, modifyUser as updateUser,verifyEmail,verifyUser };
-publishVerificationMessage('123',"uday_gattu","uday","gattu")
-    .then(()=> console.log("message showed"))
-    .catch(console.error)
-
+  };
+  
+  export { healthCheck, createUser, verifyUser,verifyEmail, updateUser, getUser };
+  publishVerificationMessage("123", "john_doe", "John", "Doe")
+    .then(() => console.log("Message published successfully"))
+    .catch(console.error);
+  
