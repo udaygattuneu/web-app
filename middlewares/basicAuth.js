@@ -2,7 +2,7 @@
 import basicAuth from 'basic-auth';
 import bcrypt from 'bcrypt';
 
-const authenticateUser = async (req, user) => {
+const authenticate = async (req, user) => {
   const credentials = basicAuth(req); 
   console.log(credentials);
   const isValid = await isValidCredentials(credentials, user);
@@ -20,4 +20,4 @@ const isValidCredentials = async (credentials, user) => {
 };
 
 
-export default authenticateUser;
+export default authenticate;
