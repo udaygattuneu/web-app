@@ -19,7 +19,7 @@ const pubSubClient = new PubSub({
     projectId:`dev-cloud-415015`
 })
 function generateVerificationLink(userId, expiresTime) {
-    return `https://udaygattu.me:5002/verify?userId=${userId}&expires=${encodeURIComponent(formatISO(expiresTime))}`;
+    return `https://udaygattu.me:8080/verify?userId=${userId}&expires=${encodeURIComponent(formatISO(expiresTime))}`;
   }
 
   function createMessagePayload(userId, username, firstName, lastName, expiresTime) {
@@ -47,7 +47,7 @@ function generateVerificationLink(userId, expiresTime) {
   }
   const healthCheck = async (req, res) => {
     try {
-      await sequelize.authenticate();
+      await sequelize.authenticateUser();
       
       logger.debug({
         severity: "DEBUG",
@@ -246,7 +246,7 @@ function generateVerificationLink(userId, expiresTime) {
           });
       }
   
-      const auth = await authenticate(req, user);
+      const auth = await authenticateUser(req, user);
       if (!auth) {
         logger.warn({
           severity: "WARN",
@@ -291,9 +291,9 @@ function generateVerificationLink(userId, expiresTime) {
             severity: "WARN",
             message: "attempt to update username",
           });
-          return res.status(400).send("Username cannot be updated.");
+          return res.status(404).send("User not found.");
         }
-        const auth = await authenticate(req, user);
+        const auth = await authenticateUser(req, user);
         if (!user.isEmailVerified) {
           logger.warn({
             severity: "WARN",
