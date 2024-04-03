@@ -19,7 +19,7 @@ const pubSubClient = new PubSub({
     projectId:`dev-cloud-415015`
 })
 function generateVerificationLink(userId, expiresTime) {
-    return `https://udaygattu.me:5002/verify?userId=${userId}&expires=${encodeURIComponent(formatISO(expiresTime))}`;
+    return `https://udaygattu.me:8080/verify?userId=${userId}&expires=${encodeURIComponent(formatISO(expiresTime))}`;
   }
 
   function createMessagePayload(userId, username, firstName, lastName, expiresTime) {
