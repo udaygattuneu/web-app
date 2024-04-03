@@ -16,6 +16,7 @@ source "googlecompute" "Webapp-packer" {
   ssh_username        = "centos"
   zone                = var.zone
   ssh_timeout         = "10m"
+
 }
 
 build {
@@ -33,7 +34,7 @@ build {
   provisioner "file" {
     source      = "../.env"
     destination = "/tmp/.env"
-   }
+  }
   provisioner "file" {
     source      = "../web-app.zip"
     destination = "/tmp/web-app.zip"
