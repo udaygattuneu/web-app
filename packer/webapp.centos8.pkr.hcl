@@ -30,10 +30,10 @@ build {
     source      = "../packer/Nodejs.sh"
     destination = "/tmp/Nodejs.sh"
   }
-  // provisioner "file" {
-  //   source      = "../.env"
-  //   destination = "/tmp/.env"
-  // }
+  provisioner "file" {
+    source      = "../.env"
+    destination = "/tmp/.env"
+   }
   provisioner "file" {
     source      = "../web-app.zip"
     destination = "/tmp/web-app.zip"
