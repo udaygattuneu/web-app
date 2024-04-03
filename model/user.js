@@ -1,5 +1,4 @@
 
-
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js'; 
 
@@ -16,7 +15,6 @@ const User = sequelize.define('User', {
     validate: {
       isEmail: true,
     },
-    
   },
   password: {
     type: DataTypes.STRING,
@@ -53,6 +51,7 @@ const User = sequelize.define('User', {
    mailSentAt: {
     type:DataTypes.DATE,
    },
+  
 }, {
   timestamps: false,
 });
