@@ -35,15 +35,15 @@ sudo dnf module enable -y nodejs:20
 sudo dnf install -y npm
  
    
-sudo cp /tmp/web-App.zip /opt/web-App.zip
+sudo cp /tmp/web-app.zip /opt/web-app.zip
  cd /opt || exit
- sudo unzip web-App.zip
- sudo cp /tmp/.env /opt/web-App
+ sudo unzip web-app.zip
+ sudo cp /tmp/.env /opt/web-app
 #  sudo cp /tmp/web-app/.env /opt/web-app/.env
-    cd web-App/ || exit
-    sudo chown -R csye6225:csye6225 /opt/web-App
+    cd web-app/ || exit
+    sudo chown -R csye6225:csye6225 /opt/web-app
  
-    sudo chmod -R 750 /opt/web-App
+    sudo chmod -R 750 /opt/web-app
     # Install Node.js and npm
    #  sudo cd /opt/web-app || exit
     sudo npm install
@@ -62,7 +62,7 @@ logging:
     webapp-receiver:
       type: files
       include_paths:
-        - /var/log/web-App/webapp.log
+        - /var/log/web-app/webapp.log
       record_log_file_path: true
   processors:
     webapp-processor:
@@ -91,11 +91,11 @@ echo "$logger" | sudo tee /etc/google-cloud-ops-agent/config.yaml >/dev/null
 # Set permissions for the new config.yml file
 sudo chown -R csye6225:csye6225 /etc/google-cloud-ops-agent/config.yaml
  
-sudo mkdir -p /var/log/web-App
+sudo mkdir -p /var/log/web-app
  
-sudo touch /var/log/web-App/webapp.log
+sudo touch /var/log/web-app/webapp.log
  
-sudo chown -R csye6225:csye6225 /var/log/web-App
+sudo chown -R csye6225:csye6225 /var/log/web-app
 
 sudo systemctl enable google-cloud-ops-agent
 sudo systemctl start google-cloud-ops-agent

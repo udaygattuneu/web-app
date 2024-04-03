@@ -4,6 +4,7 @@ packer {
       source  = "github.com/hashicorp/googlecompute"
       version = ">= 1.0.0"
     }
+    
   }
 }
 
@@ -14,10 +15,12 @@ source "googlecompute" "Webapp-packer" {
   source_image_family = var.source_image_family
   ssh_username        = "centos"
   zone                = var.zone
+  ssh_timeout = "10m"
 }
 
 build {
   sources = ["source.googlecompute.Webapp-packer"]
+  
 
   provisioner "file" {
     source      = "../csye6225.service"
@@ -32,14 +35,12 @@ build {
   //   destination = "/tmp/.env"
   // }
   provisioner "file" {
-    source      = "../web-App.zip"
-    destination = "/tmp/web-App.zip"
+    source      = "../web-app.zip"
+    destination = "/tmp/web-app.zip"
   }
 
   provisioner "shell" {
     script = "Nodejs.sh"
   }
-
-
 }
  
