@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import basicAuth from 'basic-auth';
 import  sequelize  from '../config/database.js';
 import User from '../model/user.js';
-import authenticateUser from '../middlewares/basicAuth.js';
+import authenticate from '../middlewares/basicAuth.js';
 import logger  from '../logger.js';
 // import pubSub from '@google-cloud/pubsub';
 import {PubSub} from "@google-cloud/pubsub"
@@ -19,7 +19,7 @@ const pubSubClient = new PubSub({
     projectId:`dev-cloud-415015`
 })
 function generateVerificationLink(userId, expiresTime) {
-    return `https://udaygattu.me:8080/verify?userId=${userId}&expires=${encodeURIComponent(formatISO(expiresTime))}`;
+    return `https://udaygattu.me:5002/verify?userId=${userId}&expires=${encodeURIComponent(formatISO(expiresTime))}`;
   }
 
   function createMessagePayload(userId, username, firstName, lastName, expiresTime) {
