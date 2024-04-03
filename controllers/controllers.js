@@ -47,7 +47,7 @@ function generateVerificationLink(userId, expiresTime) {
   }
   const healthCheck = async (req, res) => {
     try {
-      await sequelize.authenticate();
+      await sequelize.authenticateUser();
       
       logger.debug({
         severity: "DEBUG",
@@ -246,7 +246,7 @@ function generateVerificationLink(userId, expiresTime) {
           });
       }
   
-      const auth = await authenticate(req, user);
+      const auth = await authenticateUser(req, user);
       if (!auth) {
         logger.warn({
           severity: "WARN",
