@@ -339,7 +339,7 @@ function generateVerificationLink(userId, expiresTime) {
   };
   
   export { healthCheck, createUser, verifyUser,verifyEmail, updateUser, getUser };
-  publishVerificationMessage("123", "john_doe", "John", "Doe")
+  publishVerificationMessage("123", "Uday_Gattu", "Uday", "Gattu")
     .then(() => console.log("Message published successfully"))
     .catch(console.error);
   
