@@ -291,9 +291,9 @@ function generateVerificationLink(userId, expiresTime) {
             severity: "WARN",
             message: "attempt to update username",
           });
-          return res.status(400).send("Username cannot be updated.");
+          return res.status(404).send("User not found.");
         }
-        const auth = await authenticate(req, user);
+        const auth = await authenticateUser(req, user);
         if (!user.isEmailVerified) {
           logger.warn({
             severity: "WARN",
