@@ -40,7 +40,7 @@ sudo cp /tmp/web-app.zip /opt/web-app.zip
  sudo unzip web-app.zip
  sudo cp /tmp/.env /opt/web-app
 #  sudo cp /tmp/web-app/.env /opt/web-app/.env
-    cd web-app/ || exit
+    # cd web-app/ || exit
     sudo chown -R csye6225:csye6225 /opt/web-app
  
     sudo chmod -R 750 /opt/web-app
