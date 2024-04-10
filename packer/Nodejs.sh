@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-sudo dnf update -y
+# sudo dnf update -y
  
 # # Install MySQL
 # sudo dnf install -y mysql-server
@@ -38,19 +38,29 @@ sudo dnf install -y npm
 sudo cp /tmp/web-app.zip /opt/web-app.zip
  cd /opt || exit
  sudo unzip web-app.zip
- sudo cp /tmp/.env /opt/web-app
+#  sudo cp /tmp/.env /opt/web-app
+ sudo cp /tmp/.env /opt
+
 #  sudo cp /tmp/web-app/.env /opt/web-app/.env
+
     # cd web-app/ || exit
-    sudo chown -R csye6225:csye6225 /opt/web-app
+    # sudo chown -R csye6225:csye6225 /opt/web-app
+    sudo chown -R csye6225:csye6225 /opt
  
-    sudo chmod -R 750 /opt/web-app
+    # sudo chmod -R 750 /opt/web-app
+    sudo chmod -R 750 /opt
     # Install Node.js and npm
    #  sudo cd /opt/web-app || exit
     sudo npm install
     sudo npm uninstall bcrypt
     sudo npm install winston
 
+    sudo systemctl daemon-reload
+    sudo systemctl enable httpd
+    sudo systemctl start httpd
+
     sudo npm install bcrypt@5.1.1
+    
     sudo npm install --build-from-source=false
  
     sudo curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
@@ -106,8 +116,8 @@ sudo systemctl restart google-cloud-ops-agent
     # sudo npm test
  
     sudo systemctl daemon-reload
-    sudo systemctl enable httpd
-    sudo systemctl start httpd
+    # sudo systemctl enable httpd
+    # sudo systemctl start httpd
     sudo systemctl enable csye6225
     sudo systemctl start csye6225
     sudo systemctl status csye6225
