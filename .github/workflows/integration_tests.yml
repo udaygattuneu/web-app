@@ -24,7 +24,7 @@ jobs:
           sudo apt-get update
           sudo systemctl start mysql.service
           sudo mysql --user="${{ secrets.DB_USER }}" --password="${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS \`${{ secrets.DB_NAME }}\`;"
-          sudo mkdir -p /var/log/webapp 2>/dev/null
+          sudo mkdir -p /var/log/web-app 2>/dev/null
       
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v0.4.0
