@@ -19,7 +19,7 @@ const pubSubClient = new PubSub({
     projectId:`dev-cloud-415015`
 })
 function generateVerificationLink(userId, expiresTime) {
-    return `https://udaygattu.me:5002/verify?userId=${userId}&expires=${encodeURIComponent(formatISO(expiresTime))}`;
+    return `https://udaygattu.me:8080/verify?userId=${userId}&expires=${encodeURIComponent(formatISO(expiresTime))}`;
   }
 
   function createMessagePayload(userId, username, firstName, lastName, expiresTime) {
@@ -124,10 +124,6 @@ function generateVerificationLink(userId, expiresTime) {
       return res.status(400).json({ message: 'Verification token is missing.' });
     }
   
-    //const timestamp=User.mailSentAt;
-    //const currenttime= new Date();
-    //const differnece=(currenttime-new Date(timestamp))
-    //if(differnece>2) return res.status(400).json({message:'verified'})
   
   
     try {
@@ -159,7 +155,7 @@ function generateVerificationLink(userId, expiresTime) {
     const { token } = req.query;
   
     if (!token) {
-      return res.status(400).json({ message: 'Verification token is required.' });
+      return res.status(400).json({ message: 'Verification  is required.' });
     }
   
     try {

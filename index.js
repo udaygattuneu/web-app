@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(router);
 
-sequelize.sync({ force: true }).then(() => {
+sequelize.sync({ force: false }).then(() => {
   console.log('Database bootstrapped successfully');
   app.listen(8080, () => {
     console.log('Server is running on port 8080');
