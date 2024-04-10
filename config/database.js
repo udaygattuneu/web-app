@@ -1,10 +1,8 @@
 import Sequelize from 'sequelize';
 import dotenv from 'dotenv';
-// import { fileURLToPath } from 'url';
-// import path from 'path';
+
 
 dotenv.config();
-
 
 
 
