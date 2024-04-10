@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import basicAuth from 'basic-auth';
 import  sequelize  from '../config/database.js';
 import User from '../model/user.js';
-import authenticateUser from '../middlewares/basicAuth.js';
+import authenticate from '../middlewares/basicAuth.js';
 import logger  from '../logger.js';
 // import pubSub from '@google-cloud/pubsub';
 import {PubSub} from "@google-cloud/pubsub"
@@ -47,7 +47,7 @@ function generateVerificationLink(userId, expiresTime) {
   }
   const healthCheck = async (req, res) => {
     try {
-      await sequelize.authenticateUser();
+      await sequelize.authenticate();
       
       logger.debug({
         severity: "DEBUG",
@@ -124,10 +124,6 @@ function generateVerificationLink(userId, expiresTime) {
       return res.status(400).json({ message: 'Verification token is missing.' });
     }
   
-    //const timestamp=User.mailSentAt;
-    //const currenttime= new Date();
-    //const differnece=(currenttime-new Date(timestamp))
-    //if(differnece>2) return res.status(400).json({message:'verified'})
   
   
     try {
@@ -159,7 +155,7 @@ function generateVerificationLink(userId, expiresTime) {
     const { token } = req.query;
   
     if (!token) {
-      return res.status(400).json({ message: 'Verification token is required.' });
+      return res.status(400).json({ message: 'Verification  is required.' });
     }
   
     try {
@@ -246,7 +242,7 @@ function generateVerificationLink(userId, expiresTime) {
           });
       }
   
-      const auth = await authenticateUser(req, user);
+      const auth = await authenticate(req, user);
       if (!auth) {
         logger.warn({
           severity: "WARN",
@@ -291,9 +287,9 @@ function generateVerificationLink(userId, expiresTime) {
             severity: "WARN",
             message: "attempt to update username",
           });
-          return res.status(404).send("User not found.");
+          return res.status(400).send("Username cannot be updated.");
         }
-        const auth = await authenticateUser(req, user);
+        const auth = await authenticate(req, user);
         if (!user.isEmailVerified) {
           logger.warn({
             severity: "WARN",
