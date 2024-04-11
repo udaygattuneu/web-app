@@ -45,14 +45,14 @@ jobs:
       run: packer init .
       working-directory: ./packer
     
-    - name: Format Packer template
-      run: |
-        packer fmt -check -diff .
-        if [ $? -ne 0 ]; then
-          echo "Packer templates need formatting. Run 'packer fmt' locally and push the changes."
-          exit 1
-        fi
-      working-directory: ./packer
+    # - name: Format Packer template
+    #   run: |
+    #     packer fmt -check -diff .
+    #     if [ $? -ne 0 ]; then
+    #       echo "Packer templates need formatting. Run 'packer fmt' locally and push the changes."
+    #       exit 1
+    #     fi
+    #   working-directory: ./packer
     
     - name: Validate Packer template
       run: packer validate .

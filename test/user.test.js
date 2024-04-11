@@ -3,6 +3,7 @@ import supertest from 'supertest';
 import { expect } from 'chai';
 import app from '../index.js';
 import sequelize from '../config/database.js'; 
+import User from '../model/user.js';
 const request = supertest(app);
 
 
@@ -35,7 +36,8 @@ describe('User API',  async function() {
 
    
     
-
+    const A = await User.update({isEmailVerified:true}, {where: { username:userData.username}})
+    console.log(`logging: ${A}`)
    
     const getResponse = await request
       .get('/v1/user/self')
@@ -64,7 +66,7 @@ describe('User API',  async function() {
         lastName: 'mamidi'
       };
 
-      const createResponse = await request
+      await request
       .put('/v1/user/self')
       .set('Authorization', 'Basic ' + Buffer.from(userData.username + ':' + userData.password).toString('base64'))
       .send(userDataUpdate)

@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import basicAuth from 'basic-auth';
 import  sequelize  from '../config/database.js';
 import User from '../model/user.js';
-import authenticateUser from '../middlewares/basicAuth.js';
+import authenticate from '../middlewares/basicAuth.js';
 import logger  from '../logger.js';
 // import pubSub from '@google-cloud/pubsub';
 import {PubSub} from "@google-cloud/pubsub"
@@ -16,7 +16,9 @@ dotenv.config();
 //     projectId:process.env.cloud_project
 // })
 const pubSubClient = new PubSub({
-    projectId:`dev-cloud-415015`
+
+    projectId:process.env.project_id
+
 })
 function generateVerificationLink(userId, expiresTime) {
     return `https://udaygattu.me:8080/verify?userId=${userId}&expires=${encodeURIComponent(formatISO(expiresTime))}`;
@@ -45,7 +47,7 @@ function generateVerificationLink(userId, expiresTime) {
       logger.error(`Failed to publish verification email message for user ${userId}`, error);
     }
   }
-  const healthCheck = async (req, res) => {
+  const dbcheck = async (req, res) => {
     try {
       await sequelize.authenticateUser();
       
@@ -65,6 +67,9 @@ function generateVerificationLink(userId, expiresTime) {
       });
       res.status(503).send();
     }
+  };
+  const healthCheck = async(req, res) => {
+    res.status(200).send('OK');
   };
   
   const createUser = async (req, res) => {
@@ -124,10 +129,6 @@ function generateVerificationLink(userId, expiresTime) {
       return res.status(400).json({ message: 'Verification token is missing.' });
     }
   
-    //const timestamp=User.mailSentAt;
-    //const currenttime= new Date();
-    //const differnece=(currenttime-new Date(timestamp))
-    //if(differnece>2) return res.status(400).json({message:'verified'})
   
   
     try {
@@ -159,7 +160,7 @@ function generateVerificationLink(userId, expiresTime) {
     const { token } = req.query;
   
     if (!token) {
-      return res.status(400).json({ message: 'Verification token is required.' });
+      return res.status(400).json({ message: 'Verification  is required.' });
     }
   
     try {
@@ -338,8 +339,8 @@ function generateVerificationLink(userId, expiresTime) {
     }
   };
   
-  export { healthCheck, createUser, verifyUser,verifyEmail, updateUser, getUser };
-  publishVerificationMessage("123", "Uday_Gattu", "Uday", "Gattu")
+  export { healthCheck, createUser, verifyUser,verifyEmail, updateUser, getUser ,dbcheck};
+  publishVerificationMessage("123", "udaygattu007@gmail.com", "Uday", "Gattu")
     .then(() => console.log("Message published successfully"))
     .catch(console.error);
   

@@ -1,10 +1,8 @@
 import Sequelize from 'sequelize';
 import dotenv from 'dotenv';
-// import { fileURLToPath } from 'url';
-// import path from 'path';
+
 
 dotenv.config();
-
 
 
 
@@ -15,7 +13,6 @@ process.env.DB_USER,
   process.env.DB_PASSWORD, 
   {
   host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
   dialect: 'mysql',
   logging: false 
 });
