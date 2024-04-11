@@ -12,9 +12,6 @@ import {formatISO,addMinutes} from "date-fns"
 import dotenv from "dotenv";
 import { use } from 'chai';
 dotenv.config();
-// const pubSubClient = new pubSub({
-//     projectId:process.env.cloud_project
-// })
 const pubSubClient = new PubSub({
 
     projectId:process.env.project_id
