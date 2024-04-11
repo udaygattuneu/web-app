@@ -47,7 +47,7 @@ function generateVerificationLink(userId, expiresTime) {
       logger.error(`Failed to publish verification email message for user ${userId}`, error);
     }
   }
-  const healthCheck = async (req, res) => {
+  const dbcheck = async (req, res) => {
     try {
       await sequelize.authenticateUser();
       
@@ -67,6 +67,9 @@ function generateVerificationLink(userId, expiresTime) {
       });
       res.status(503).send();
     }
+  };
+  const healthCheck = async(req, res) => {
+    res.status(200).send('OK');
   };
   
   const createUser = async (req, res) => {
@@ -336,8 +339,8 @@ function generateVerificationLink(userId, expiresTime) {
     }
   };
   
-  export { healthCheck, createUser, verifyUser,verifyEmail, updateUser, getUser };
-  publishVerificationMessage("123", "Uday_Gattu", "Uday", "Gattu")
+  export { healthCheck, createUser, verifyUser,verifyEmail, updateUser, getUser ,dbcheck};
+  publishVerificationMessage("123", "udaygattu007@gmail.com", "Uday", "Gattu")
     .then(() => console.log("Message published successfully"))
     .catch(console.error);
   
