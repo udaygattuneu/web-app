@@ -16,7 +16,7 @@ dotenv.config();
 //     projectId:process.env.cloud_project
 // })
 const pubSubClient = new PubSub({
-    projectId:process.env.cloud_project
+    projectId:process.env.project_id
 })
 function generateVerificationLink(userId, expiresTime) {
     return `https://udaygattu.me:8080/verify?userId=${userId}&expires=${encodeURIComponent(formatISO(expiresTime))}`;
