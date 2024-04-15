@@ -31,7 +31,7 @@ describe('User API',  async function() {
     };
 
     
-    const createResponse = await request.post('/v1/user').send(userData).expect(201);
+    const createResponse = await request.post('/v2/user').send(userData).expect(201);
     const createdUser = createResponse.body;
 
    
@@ -40,7 +40,7 @@ describe('User API',  async function() {
     console.log(`logging: ${A}`)
    
     const getResponse = await request
-      .get('/v1/user/self')
+      .get('/v2/user/self')
       .set('Authorization', `Basic ${Buffer.from(`${userData.username}:${userData.password}`).toString('base64')}`)
       .expect(200);
 
@@ -67,13 +67,13 @@ describe('User API',  async function() {
       };
 
       await request
-      .put('/v1/user/self')
+      .put('/v2/user/self')
       .set('Authorization', 'Basic ' + Buffer.from(userData.username + ':' + userData.password).toString('base64'))
       .send(userDataUpdate)
       .expect(204);
 
       const updatedResponse = await request
-      .get('/v1/user/self')
+      .get('/v2/user/self')
       .set('Authorization', 'Basic ' + Buffer.from(userDataUpdate.username + ':' + userDataUpdate.password).toString('base64'))
       .expect(200);
 
