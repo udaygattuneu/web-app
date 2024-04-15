@@ -267,7 +267,7 @@ jobs:
         run: |
           gcloud compute instance-groups managed rolling-action start-update ${{steps.get_groupmanager.outputs.groupmanager}} \
             --version=template=https://compute.googleapis.com/compute/v1/projects/dev-cloud-415015/regions/us-east4/instanceTemplates/${{ steps.get_template.outputs.tempName }} \
-            --max-unavailable=0 \
+            --max-unavailable=3 \
             --region=${{secrets.REGION}}
 
       - name: Monitoring the instances
@@ -277,7 +277,7 @@ jobs:
             --region=${{secrets.REGION}}
 
 
-            
+
 
     
 
