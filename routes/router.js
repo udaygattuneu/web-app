@@ -5,11 +5,11 @@ import { healthCheck, createUser,verifyUser,verifyEmail, getUser, updateUser } f
 
 router.get('/healthz', healthCheckMiddleware, healthCheck);
 router.all('/healthz', healthCheckMiddleware, methodNotAllowed); 
-router.post('/v1/user', createUser);
-router.get('/v1/user/self', getUser);
-router.put('/v1/user/self', updateUser);
+router.post('/v2/user', createUser);
+router.get('/v2/user/self', getUser);
+router.put('/v2/user/self', updateUser);
 router.get('/verify', verifyUser);
-router.get('/v1/user/verify', verifyEmail);
+router.get('/v2/user/verify', verifyEmail);
 
 export default router;
 
