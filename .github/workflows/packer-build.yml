@@ -269,6 +269,7 @@ jobs:
             --max-unavailable=3 \
             --region=${{secrets.REGION}}
 
+            
       - name: Monitoring the instances
         run: |
           gcloud compute instance-groups managed wait-until ${{steps.get_groupmanager.outputs.groupmanager}} \
@@ -278,5 +279,6 @@ jobs:
 
 
     
+
 
 
