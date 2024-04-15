@@ -241,7 +241,7 @@ jobs:
           --instance-template-region=${{ secrets.REGION }}  \
           --project=${{secrets.PROJECT_ID}} \
           --machine-type=${{secrets.MACHINETYPE}} \
-          --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=https://www.googleapis.com/compute/v1/projects/devproject-415015/regions/us-east4/subnetworks/webapp_subnet \
+          --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=https://www.googleapis.com/compute/v1/projects/dev-cloud-415015/regions/us-east4/subnetworks/webapp_subnet \
           --metadata=startup-script="#!/bin/bash
             echo \"DB_HOST=${{secrets.HOSTIP}}\" > /opt/.env
             echo \"DB_USER=${{secrets.DBUSERNAME}}\" >> /opt/.env
@@ -251,7 +251,7 @@ jobs:
             echo \"project_id=${{ secrets.PROJECT_ID}}\" >> /opt/.env " \
           --service-account=${{secrets.SERVICE_ACCOUNT_EMAIL}} \
           --scopes="cloud-platform" \
-          --create-disk=auto-delete=yes,boot=yes,device-name=Disk1,image="projects/devproject-415015/global/images/${{steps.get_Image.outputs.IMAGE}}",kms-key=${{steps.get_instance_key.outputs.instance_key}},mode=rw,size=100,type=pd-balanced \
+          --create-disk=auto-delete=yes,boot=yes,device-name=Disk1,image="projects/dev-cloud-415015/global/images/${{steps.get_Image.outputs.IMAGE}}",kms-key=${{steps.get_instance_key.outputs.instance_key}},mode=rw,size=100,type=pd-balanced \
           --tags=http-server
 
       - name: Get Template
@@ -265,11 +265,11 @@ jobs:
       - name: Configure Instance Groups
         run: |
           gcloud compute instance-groups managed rolling-action start-update ${{steps.get_groupmanager.outputs.groupmanager}} \
-            --version=template=https://compute.googleapis.com/compute/v1/projects/devproject-415015/regions/us-east4/instanceTemplates/${{ steps.get_template.outputs.tempName }} \
+            --version=template=https://compute.googleapis.com/compute/v1/projects/dev-cloud-415015/regions/us-east4/instanceTemplates/${{ steps.get_template.outputs.tempName }} \
             --max-unavailable=3 \
             --region=${{secrets.REGION}}
 
-            
+
       - name: Monitoring the instances
         run: |
           gcloud compute instance-groups managed wait-until ${{steps.get_groupmanager.outputs.groupmanager}} \
