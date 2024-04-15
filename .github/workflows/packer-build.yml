@@ -1,3 +1,4 @@
+
 name: Packer Build
 env:
   DATABASE_HOSTNAME: ${{ secrets.DB_HOST }}
@@ -64,3 +65,85 @@ jobs:
       - name: Build Packer image
         run: packer build .
         working-directory: ./packer
+
+      - name: Get Latest Image from GCP Console
+        id: get_Image
+        run: |
+           IMAGE=$(gcloud compute images list --project dev-cloud-415015 --filter='name:centos-8-stream-*' --sort-by=~creationTimestamp --limit=1 --format='value(name)')
+           echo "::set-output name=IMAGE::$IMAGE"
+           echo "IMAGE: $IMAGE"
+ 
+      - name: Get Managed Instance Group
+        id: get_groupmanager
+        run: |
+          groupmanager=$(gcloud compute instance-groups managed list --regions ${{ secrets.REGION }} --format="value(name)" --limit 1)
+          echo "::set-output name=groupmanager::$groupmanager"
+          echo "groupmanager: $groupmanager"
+
+        
+      - name: Get latestck
+        id: get_latestck
+        run: |
+          latestck=$(gcloud kms keyrings list --location=${{ secrets.REGION }} --project=${{secrets.PROJECT_ID}} --format="value(name, createTime)" | sort -k2,2r | head -n1 | awk '{print $1}')
+          
+          echo "::set-output name=latestck::$latestck"
+          echo "latestck=$latestck"
+
+      - name: get service account 
+        run: |
+           echo "${{secrets.SERVICE_ACCOUNT_EMAIL}}"
+
+      - name: Get instance key
+        id: get_instance_key
+        run: |
+         instance_key=$(gcloud kms keys list --location=${{ secrets.REGION }} --keyring=${{ steps.get_latestck.outputs.latestck }} --project=${{ secrets.PROJECT_ID }} --filter=name:vm-machine-key --format="value(name)")
+         echo "::set-output name=instance_key::$instance_key"
+         echo "instance_key=$instance_key"
+
+         
+      - name: Create Instance Template
+        run: |
+          gcloud compute instance-templates create instance-template-$(date +%Y%m%d%H%M%S) \
+          --instance-template-region=${{ secrets.REGION }}  \
+          --project=${{secrets.PROJECT_ID}} \
+          --machine-type=${{secrets.MACHINETYPE}} \
+          --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=https://www.googleapis.com/compute/v1/projects/dev-cloud-415015/regions/us-east4/subnetworks/udaygattu-webapp \
+          --metadata=startup-script="#!/bin/bash
+            echo \"DB_HOST=${{secrets.HOSTIP}}\" > /opt/.env
+            echo \"DB_USER=${{secrets.DBUSERNAME}}\" >> /opt/.env
+            echo \"DB_PASSWORD=${{secrets.NEWPASSWORD}}\" >> /opt/.env
+            echo \"DB_NAME=${{secrets.DBNAME}}\" >> /opt/.env
+            echo \"DB_PORT=${{secrets.DBPORT}}\" >> /opt/.env
+            echo \"project_id=${{ secrets.PROJECT_ID}}\" >> /opt/.env " \
+          --service-account=${{secrets.SERVICE_ACCOUNT_EMAIL}} \
+          --scopes="cloud-platform" \
+          --create-disk=auto-delete=yes,boot=yes,device-name=Disk1,image="projects/dev-cloud-415015/global/images/${{steps.get_Image.outputs.IMAGE}}",kms-key=${{steps.get_instance_key.outputs.instance_key}},mode=rw,size=100,type=pd-balanced \
+          --tags=http-server
+
+      - name: Get Template
+        id: get_template
+        run: |
+          tempName=$(gcloud compute instance-templates list --project=${{secrets.PROJECT_ID}} --sort-by="~creationTimestamp" --limit=1 --format="value(name)")
+          echo "::set-output name=tempName::$tempName"
+          echo "tempName: $tempName"
+
+
+      - name: Configure Instance Groups
+        run: |
+          gcloud compute instance-groups managed rolling-action start-update ${{steps.get_groupmanager.outputs.groupmanager}} \
+            --version=template=https://compute.googleapis.com/compute/v1/projects/dev-cloud-415015/regions/us-east4/instanceTemplates/${{ steps.get_template.outputs.tempName }} \
+            --max-unavailable=3 \
+            --region=${{secrets.REGION}}
+
+      - name: Monitoring the instances
+        run: |
+          gcloud compute instance-groups managed wait-until ${{steps.get_groupmanager.outputs.groupmanager}} \
+            --version-target-reached \
+            --region=${{secrets.REGION}}
+
+
+
+    
+
+
+
