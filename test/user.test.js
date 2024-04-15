@@ -7,6 +7,7 @@ import User from '../model/user.js';
 const request = supertest(app);
 
 
+
 before(async () => {
   
   await sequelize.sync({ force: true });
