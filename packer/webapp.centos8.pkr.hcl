@@ -11,7 +11,7 @@ packer {
 
 source "googlecompute" "Webapp-packer" {
   project_id          = var.project_id
-  image_name          = var.image_name
+  image_name          = "centos-8-stream-image-${formatdate("YYYY-MM-DD-hh-mm-ss", timestamp())}"
   source_image_family = var.source_image_family
   ssh_username        = "centos"
   zone                = var.zone
@@ -44,4 +44,4 @@ build {
     script = "Nodejs.sh"
   }
 }
- 
+

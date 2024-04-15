@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import basicAuth from 'basic-auth';
 import  sequelize  from '../config/database.js';
 import User from '../model/user.js';
-import authenticate from '../middlewares/basicAuth.js';
+import authenticateUser from '../middlewares/basicAuth.js';
 import logger  from '../logger.js';
 // import pubSub from '@google-cloud/pubsub';
 import {PubSub} from "@google-cloud/pubsub"
@@ -12,15 +12,12 @@ import {formatISO,addMinutes} from "date-fns"
 import dotenv from "dotenv";
 import { use } from 'chai';
 dotenv.config();
-// const pubSubClient = new pubSub({
-//     projectId:process.env.cloud_project
-// })
 const pubSubClient = new PubSub({
 
     projectId:process.env.project_id
 
 })
-function generateVerificationLink(userId, expiresTime) {
+function writeVerificationlinks(userId, expiresTime) {
     return `https://udaygattu.me:8080/verify?userId=${userId}&expires=${encodeURIComponent(formatISO(expiresTime))}`;
   }
 
@@ -29,7 +26,7 @@ function generateVerificationLink(userId, expiresTime) {
       userId,
       username,
       fullName: `${firstName} ${lastName}`,
-      verificationLink: generateVerificationLink(userId, expiresTime)
+      verificationLink: writeVerificationlinks(userId, expiresTime)
     });
   }
   async function publishMessage(topicName, messageData) {
@@ -169,7 +166,7 @@ function generateVerificationLink(userId, expiresTime) {
       });
       const timestamp = user.mailSentAt;
   const currentTime = new Date();
-  const difference = (currentTime - timestamp) / 1000 / 60; // Difference in minutes
+  const difference = (currentTime - timestamp) / 1000 / 60; 
   
   
   if (difference <= 2) {
@@ -233,8 +230,6 @@ function generateVerificationLink(userId, expiresTime) {
   
         return res.status(401).json({ message: "Invalid Credentials" });
       }
-  
-      // Check if the user's email has been verified
       if (!user.isEmailVerified) {
         logger.warn({
           severity: "WARN",
@@ -340,7 +335,7 @@ function generateVerificationLink(userId, expiresTime) {
   };
   
   export { healthCheck, createUser, verifyUser,verifyEmail, updateUser, getUser ,dbcheck};
-  publishVerificationMessage("123", "udaygattu007@gmail.com", "Uday", "Gattu")
+  publishVerificationMessage("123", "udaygattu", "Uday", "Gattu")
     .then(() => console.log("Message published successfully"))
     .catch(console.error);
   
