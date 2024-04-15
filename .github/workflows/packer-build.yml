@@ -107,7 +107,7 @@ jobs:
           --instance-template-region=${{ secrets.REGION }}  \
           --project=${{secrets.PROJECT_ID}} \
           --machine-type=${{secrets.MACHINETYPE}} \
-          --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=https://www.googleapis.com/compute/v1/projects/dev-cloud-415015/regions/us-east4/subnetworks/webapp_subnet \
+          --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=https://www.googleapis.com/compute/v1/projects/dev-cloud-415015/regions/us-east4/subnetworks/udaygattu-webapp \
           --metadata=startup-script="#!/bin/bash
             echo \"DB_HOST=${{secrets.HOSTIP}}\" > /opt/.env
             echo \"DB_USER=${{secrets.DBUSERNAME}}\" >> /opt/.env
