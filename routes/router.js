@@ -11,5 +11,6 @@ router.put('/v2/user/self', updateUser);
 router.get('/verify', verifyUser);
 router.get('/v2/user/verify', verifyEmail);
 
+
 export default router;
 
