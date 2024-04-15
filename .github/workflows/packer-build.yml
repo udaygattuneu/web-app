@@ -235,6 +235,7 @@ jobs:
          echo "::set-output name=instance_key::$instance_key"
          echo "instance_key=$instance_key"
 
+         
       - name: Create Instance Template
         run: |
           gcloud compute instance-templates create instance-template-$(date +%Y%m%d%H%M%S) \
