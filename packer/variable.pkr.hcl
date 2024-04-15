@@ -8,11 +8,7 @@ variable "zone" {
   type        = string
   default     = "us-east4-a"
 }
-variable "image_name" {
-  description = "The name of the resulting custom image"
-  type        = string
-  default     = "centos-stream-8-custom3-image"
-}
+
 variable "source_image_family" {
   description = "The source image family for the base image"
   type        = string
